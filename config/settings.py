@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +28,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '4c-f-+jym0l*t(3qipm(a+28it16ast3_3nwpv8n0@!$^m+pb_'
+#SECRET_KEY = '4c-f-+jym0l*t(3qipm(a+28it16ast3_3nwpv8n0@!$^m+pb_'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -47,6 +56,7 @@ INSTALLED_APPS = [
     # local apps
     'accounts',
     'pages',
+    'books',
 ]
 
 MIDDLEWARE = [
@@ -84,14 +94,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432
-    }
+    "default": env.db("DATABASE_URL",
+    default="postgres://postgres@db/postgres")
 }
 
 
@@ -161,4 +165,12 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend', # adding the allauth into the authentication system
 )
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # temporary setting to senf email to the CLI until we set the SMTP
+
+# to configure email to retrive password
+EMAIL_BACKEND= 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL= 'norfaizal@ummc.edu.my'
+EMAIL_HOST= 'smtp.sendgrid.net'
+EMAIL_HOST_USER= 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_PORT= 587
+EMAIL_USE_TLS= True
