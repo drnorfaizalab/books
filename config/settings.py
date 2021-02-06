@@ -143,6 +143,10 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+# Media files live here
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 #Custom user
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
